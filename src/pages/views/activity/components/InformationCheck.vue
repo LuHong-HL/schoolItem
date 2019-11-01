@@ -87,7 +87,7 @@ export default {
       // id为对应活动的id
       console.log("id",id)
       // this.$router.push({ name: "activityComments",params:{activityId:id} });
-      this.$router.push({ path:"activityComments",query:{activityId:id} });
+      this.$router.push({ path:"check",query:{activityId:id} });
     },
     //删除活动阻止冒泡
     deleteActivity() {},

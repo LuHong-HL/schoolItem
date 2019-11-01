@@ -3,7 +3,7 @@
     <!-- 列表 -->
     <!-- 模态框 -->
     <a-modal v-model="visible" :footer="null" :closable="false" width="400px">
-      <img :src="$baseURL+showImgUrl" alt="图片加载失败" title="刘亦菲" />
+      <img :src="$baseURL+showImgUrl" alt="图片加载失败" />
     </a-modal>
     <a-table
       :columns="columns"

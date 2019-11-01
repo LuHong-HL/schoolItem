@@ -26,6 +26,12 @@
 					{
 						key: 'activity',
 						title: '活动管理',
+						children:[
+							{
+								key:'informationCheck',
+								title:'申请信息审核'
+							}
+						]
 					},
 					{
 						key: 'organization',

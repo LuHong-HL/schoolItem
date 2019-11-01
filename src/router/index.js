@@ -31,11 +31,22 @@ import UserAdd from '../pages/views/user/components/UserAdd'
 import ActivityCommets from '../pages/views/comment/components/ActivityComments.vue'
 import ChangePassword from '../pages/views/organization/components/ChangePassword.vue'
 import ModifyInformation from '../pages/views/organization/components/ModifyInformation.vue'
+import MavenEditor from '../pages/views/maveneditor/MavenEditor.vue'
+import InformationCheck from '../pages/views/activity/components/InformationCheck.vue'
+import Check from '../pages/views/activity/components/Check.vue'
 
 Vue.use(Router)
 
 const router = new Router({
   routes: [{
+    path: '/mavenEditor',
+    name: 'MavenEditor',
+    component: MavenEditor,
+    meta:{
+      title:"发布活动"
+    },
+  },
+  {
     path: '/',
     name: 'Login',
     component: Login,
@@ -121,7 +132,24 @@ const router = new Router({
         path: 'modifyInformation',
         name: 'modifyInformation',
         component: ModifyInformation
-      }
+      },
+      {
+        path: 'informationCheck',
+        name: 'informationCheck',
+        component: InformationCheck,
+        meta: {
+          title: '申请信息审核'
+        }
+      },
+      {
+        path: 'check',
+        name: 'check',
+        component: Check,
+        meta: {
+          title: '申请信息审核'
+        }
+      },
+
       // {
       // 	path: 'studentLeave',
       // 	name: 'StudentLeave',
