@@ -103,8 +103,8 @@ Vue.prototype.$qs = qs //qs.stringify()将对象 序列化成URL的形式，以&
 Vue.use(VueAxios, axios) //axios结合vue-axios使用
 // Vue.prototype.placeGlobal=PlaceGlobal
 // 设置默认baseURL
-// const baseURL=axios.defaults.baseURL = 'http://119.23.34.254:8866/'
-const baseURL=axios.defaults.baseURL = 'http://10.20.5.49:8866/'
+const baseURL=axios.defaults.baseURL = 'http://119.23.34.254:8866/'
+// const baseURL=axios.defaults.baseURL = 'http://10.20.5.49:8866/'
 // const baseURL=axios.defaults.baseURL = 'http://172.18.44.109:8080/'
 // const baseURL=axios.defaults.baseURL = 'http://localhost:8866/'
 

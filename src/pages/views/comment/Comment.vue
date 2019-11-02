@@ -8,7 +8,7 @@
             <div class="image-box">
               <img
                 alt="example"
-                :src="$baseURL+item.orgLogoLink"
+                :src="$baseURL+item.pictures"
                 slot="cover"
               />
             </div>
