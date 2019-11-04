@@ -1,53 +1,77 @@
 <template>
-  <div class="mavon-editor">
-    <!-- <input type="text" spellcheck="false" maxlength="80" class="title-input" placeholder="请输入文章标题..."
-      v-model="articleTitle">
+<div class="content">
+<div class="mavon-editor">
+    <div class="mavon-header">
+      <p>
+        <label for="organization">机构社团：</label>
+        <a-input placeholder="名称" style="margin-left: 12px;" id="organization" v-model="orgName"/>
+        <label for="title">活动标题：</label>
+        <a-input placeholder="标题" id="title" v-model="title" />
+      </p>
+      <p style="margin-top: 20px;">
+        <label for="type">参与者类型：</label>
+        <a-cascader :options="options" @change="selectChange" changeOnSelect v-model="fullRole" placeholder="请选择"
+          style="width: 400px;margin-right: 20px;" />
+        <label for="num">参与人数：</label>
+        <a-input placeholder="参与人数" id="num" v-model="num" />
+      </p>
 
+      <p style="margin-top:20px">
+        <label for="startTime">开始时间：</label>
+        <a-date-picker showTime placeholder="开始时间"  style="margin-left: 12px;margin-right:20px;width: 400px;"
+          id="startTime" v-model="startTime" format="YYYY-MM-DD HH:mm" />
+        <label for="endTime">结束时间：</label>
+        <a-date-picker showTime placeholder="结束时间"  style="width: 400px;" id="endTime" v-model="endTime"
+          format="YYYY-MM-DD HH:mm" />
+      </p>
+      <p style="margin-top:20px" v-for="(item,index) in people" :key="item">
+        <label for="person">活动负责人：</label>
+        <a-input placeholder="活动负责人" id="person" v-model="leaderList[index].userName" />
+        <label for="phone">联系方式：</label>
+        <a-input placeholder="手机号码" id="phone" v-model="leaderList[index].phone" />
+        <a-button type="danger" @click="delPeople(index)" v-if="item !== people ">删除</a-button>
 
-    <a-button type="primary" ghost @click="saveArticle" :disabled="articleStatus == 3 ">
-      保存至草稿箱
-    </a-button>
-    <a-button type="primary" ghost @click="showDrawer" style="margin-left: 10px;" :disabled="articleStatus == 3">
-      草稿箱
-    </a-button>
+        <a-button type="primary" @click="addPeople" v-if="item == people " ghost>添加</a-button>
+      </p>
+      <p style="margin-top: 20px;">
+        <label for="ativity" style="float: left;">活动海报：</label>
+        <a-upload listType="picture-card" :fileList="fileList" :remove="handleRemove" :beforeUpload="beforeUpload"
+          :multiple="true" id="ativity">
+          <div v-if="fileList.length < 1">
+            <a-icon type="plus" />
+            <div class="ant-upload-text">Upload</div>
+          </div>
+        </a-upload>
+        <div style="clear: both;"></div>
+      </p>
+    </div>
+    <div class="mavon-btn">
+      <a-button type="primary" ghost @click="saveActivity">
+        保存至草稿箱
+      </a-button>
+      <a-button type="primary" ghost @click="getActivity" style="margin-left: 10px;">
+        草稿箱
+      </a-button>
+      <a-button type="primary" ghost @click="postActivity" style="margin-left: 10px;" v-if="status == 2">
+        发布
+      </a-button>
+      <a-button type="primary" ghost @click="modifyActivity" style="margin-left: 10px;" v-if="status == 1">
+        发布
+      </a-button>
+    </div>
     <a-drawer title="草稿箱" placement="right" :closable="false" @close="drawerClose" :visible="drawerVisible"
       class="my-drawer">
       <ul>
-        <li v-for="item in draftList" :key="item.articleId" @click="showDraft(item.articleId)">
-          <span>{{item.articleTitle}}</span></li>
+        <li v-for="item in draftList" :key="item.articleId" @click="changeActivity(item.id)">
+          <span>{{item.title}}</span></li>
       </ul>
+      <div v-if="!draftList.length">暂无草稿</div>
     </a-drawer>
-    <a-popover title="发布文章" trigger="click" v-model="popoverVisible">
-      <template slot="content">
-        <div class="article-popover">
-          <h1>种类</h1>
-          <a-select v-model="categoryId" style="width: 150px" @change="categoryChange">
-            <a-select-option :value="item.categoryId" v-for="item in categoryList" :key="item.categoryId"
-              v-if="item.state">{{item.categoryName}}</a-select-option>
-          </a-select>
-          <h1>标签</h1>
-          <a-select v-model="tagId" style="width: 150px">
-            <a-select-option :value="item.tagId" v-for="item in tagList" :key="item.tagId">{{item.tagName}}
-            </a-select-option>
-          </a-select>
-          <p style="margin-top: 15px">
-            <a-button type="primary" @click="submitArticle">确认</a-button>
-          </p>
-        </div>
-      </template>
-      <a-button type="primary" ghost style="margin-left: 10px;" v-if="articleStatus != 2"
-        :disabled="articleStatus == 3">发布</a-button>
-      <a-button type="primary" ghost style="margin-left: 10px;" v-if="articleStatus != 1 && articleStatus != 3">修改
-      </a-button>
-    </a-popover> -->
-    <div></div>
-    <div>负责人</div>
-    <div>警戒</div>
-    <div>标题</div>
-    <mavon-editor v-model="articleContent" :ishljs="true" ref=md @imgAdd="$imgAdd" @imgDel="$imgDel"
+    <mavon-editor v-model="description" :ishljs="true" ref=md @imgAdd="$imgAdd" @imgDel="$imgDel"
       @change="getRenderVal">
     </mavon-editor>
   </div>
+</div>
 
 </template>
 <script>
@@ -66,12 +90,8 @@
       mavonEditor
     },
     created() {
-      // this.articleStatus = this.$route.query.id;
-      // this.articleId = this.$route.query.articleId;
-      // if (this.articleStatus != 1) //博文管理点击查看和修改文章的时候触发的回调
-      //   this.getArticle(this.articleId);
-      // else
-      //   this.getCategoryAndTag();
+      this.getOrganization();
+      this.getfullName(1);
     },
     beforeDestroy() {
       if (!this.isPost) { //关闭网页如果还没发布，则保存到草稿箱
@@ -80,206 +100,271 @@
     },
     data() {
       return {
-        articleObj: null,
-        articleTitle: '',
-        articleContent: '',
-        isTrue: true,
+        id: '',
+        orgName: '',
+        title: '',
+        description: '',
         renderVal: '',
-        popoverVisible: false,
+        fullRole: [],
+        fileList: [],
+        endTime: '',
+        leaderList: [{
+          userName: '',
+          phone: ''
+        }],
+        num: '',
+        pictures: '',
+        startTime: '',
+        status: 2,
+        people: 1,
+        type: 6,
+        imgList: [],
+        options: [],
         drawerVisible: false,
-        status: 1,
-        categoryId: '',
-        tagId: '',
-        articleId: '',
-        imgList:[],
-        categoryList: [],
-        tagList: [],
+        page: 1,
+        pageSize: 100,
         draftList: [],
-        articleStatus: '', //1 文章编写 2 文章修改 3 文章查看
-        isPost: false, //确认发布文章
-        isDraft: false, //是否从草稿里面取出来的
       }
     },
     methods: {
+      getOrganization() {
+        this.axios.get('/organization/0').then(res => {
+          this.orgName = res.data.data.name;
+        })
+      },
+      addPeople() {
+        let item = {
+          userName: '',
+          phone: ''
+        }
+        this.leaderList.push(item);
+        this.people++;
+      },
+      delPeople(index) {
+        this.leaderList.splice(index, 1);
+        this.people--;
+      },
+
+      selectChange(value) {
+        this.fullRole = value;
+      },
+      beforeUpload(file) {
+        let param = new FormData();
+        param.append("file", file);
+        param.append('type', this.type)
+        let config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        };
+        this.axios.post('/file', param, config).then(res => {
+          let data = res.data;
+          if (data.code == 0) {
+            let item = {
+              uid: data.data,
+              status: 'done',
+              url: this.home + data.data
+            }
+            this.pictures = data.data;
+            this.fileList.push(item);
+          }
+        })
+        return false;
+      },
+      handleRemove() {
+        this.fileList.splice(0, 1);
+        this.pictures = '';
+      },
       // 绑定@imgAdd event
       $imgAdd(pos, $file) {
         // 第一步.将图片上传到服务器.
         var formdata = new FormData();
         formdata.append('file', $file);
-        this.axios.post('/author/imageDto/image', formdata).then(res => {
-          console.log(res);
-          let data = res.data.data;
-          if (res.data.code == 0){
-            this.$refs.md.$img2Url(pos,data.imageUrl);
-            this.imgList.push(data);   
+        formdata.append('type', this.type)
+        this.axios.post('/file', formdata).then(res => {
+          let data = res.data.data.replace(/\\/g, "/");
+          if (res.data.code == 0) {
+            this.$refs.md.$img2Url(pos, this.home + data);
+            this.imgList.push(data);
           }
         })
       },
       $imgDel([url, file]) {
-        for(let i = 0;i<this.imgList.length;i++){
-          if(this.imgList[i].imageUrl == url){
-            this.delArticleImg(this.imgList[i].imageId)
+        for (let i = 0; i < this.imgList.length; i++) {
+          if (this.home + this.imgList[i] == url) {
+            this.delArticleImg(this.imgList[i].replace(/\//g, "\\"))
             break;
           }
         }
 
       },
-      delArticleImg(id){
-        this.axios.delete('/author/imageDto/image/'+id).then(res=>{
-          if(res.data.code != 0){
+      delArticleImg(url) {
+        this.axios.delete('/file' + url).then(res => {
+          if (res.data.code != 0) {
             this.$message.error('图片删除失败');
           }
         })
       },
       getRenderVal(value, render) {
-        this.articleContent = value;
+        this.description = value;
         this.renderVal = marked(value);
       },
-      getArticle(articleId) {
-        this.axios.get('/author/articleDto/' + articleId).then(res => {
-          console.log(res);
-          if (res.data.code == 0) {
-            let data = res.data.data;
-            this.articleTitle = data.articleTitle;
-            this.articleContent = data.articleContent;
-            this.categoryId = data.categoryId;
-            this.tagId = data.tags[0].tagId;
-            this.status = data.state;
-            this.getCategoryAndTag();
+      checkPhone() {
+        var reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+        for (let i = 0; i < this.leaderList.length; i++) {
+          if (!reg.test(this.leaderList[i].phone))
+            return false;
+        }
+        return true;
+      },
+      checkInput() {
+        if (!this.title) {
+          this.$message.error('请填写活动标题');
+          return false;
+        } else if (!this.fullRole) {
+          this.$message.error('请选择参与者类型');
+          return false;
+        } else if (!this.num || typeof (parseInt(this.num)) != 'number') {
+          this.$message.error('参与人数填写不正确');
+          return false;
+        } else if (!this.startTime) {
+          this.$message.error('请填写活动开始时间');
+          return false;
+        } else if (!this.endTime) {
+          this.$message.error('请填写活动结束时间');
+          return false;
+        } else if (!this.leaderList[0].userName) {
+          this.$message.error('请填写负责人');
+          return false;
+        } else if (!this.checkPhone()) {
+          this.$message.error('请正确填写负责人联系方式');
+          return false;
+        } else if (!this.pictures) {
+          this.$message.error('请上传活动海报');
+          return false;
+        } else if (!this.description) {
+          this.$message.error('请填写活动详情');
+          return false;
+        }
+        return true;
+      },
+      saveOrPostActivity() {
+        if (this.checkInput()) {
+          let activity = {
+            description: this.renderVal,
+            orgName: this.orgName,
+            fullRole: this.fullRole[0],
+            num: parseInt(this.num),
+            pictures: this.pictures,
+            title: this.title,
+            startTime: new Date(this.startTime.valueOf()),
+            endTime: new Date(this.endTime.valueOf()),
+            leaderList: this.leaderList,
+            status: this.status,
           }
-
-        })
-      },
-      getArticleObject() {
-        let tag = {
-          tagId: this.tagId,
-          state: this.status
+          console.log(activity)
+          this.axios.post('/activity', activity).then(res => {
+            console.log(res)
+            if (res.data.code == 0) {
+                this.$message.success('发布成功');
+            }
+          })
         }
-        let tagForms = [];
-        tagForms.push(tag);
-        this.articleObj = {
-          articleId: this.articleId,
-          categoryId: this.categoryId,
-          articleContent: this.articleContent,
-          articleHtml: this.renderVal,
-          articleTitle: this.articleTitle,
-          state: this.status,
-          tagForms: tagForms
-        }
-        console.log(this.articleObj)
       },
-      submitArticle() {
-        if (this.articleStatus == 1 && !this.isDraft) {
-          this.isPost = true; //
-          this.postArticle();
-        } else
-          this.updatedArticle();
+      postActivity() {
+        this.status = 2;
+        this.saveOrPostActivity();
       },
-      postArticle() {
+      saveActivity() {
         this.status = 1;
-        this.getArticleObject();
-        if (this.articleTitle.trim() == '')
-          this.$message.error('标题不能为空');
-        else
-          this.axios.post('/author/articleDto', this.articleObj).then(res => {
-            console.log(res);
+        this.saveOrPostActivity();
+      },
+      modifyActivity() {
+        this.status = 2;
+        if (this.checkInput()) {
+          let activity = {
+            id: this.id,
+            description: this.renderVal,
+            orgName: this.orgName,
+            fullRole: this.fullRole[0],
+            num: parseInt(this.num),
+            pictures: this.pictures,
+            title: this.title,
+            startTime: new Date(this.startTime.valueOf()),
+            endTime: new Date(this.endTime.valueOf()),
+            leaderList: this.leaderList,
+            status: this.status,
+          }
+          console.log(activity)
+          this.axios.put('/activity', activity).then(res => {
+            console.log(res)
             if (res.data.code == 0) {
               this.$message.success('发布成功');
-              this.post = false;
-            } else {
-              this.$message.error('标题重复或者草稿箱已经存在');
+              this.status = 2;
             }
           })
-
-      },
-      updatedArticle() {
-        this.getArticleObject();
-        if (this.articleTitle.trim() == '')
-          this.$message.error('标题不能为空');
-        else
-          this.axios.put('/author/articleDto', this.articleObj).then(res => {
-            console.log(res);
-            if (res.data.code == 0) {
-              if (this.isDraft)
-                this.$message.success('发布成功');
-              else
-                this.$message.success('修改成功')
-              this.isDraft = false;
-            } else {
-              this.$message.error('修改失败');
-            }
-          })
-      },
-      saveArticle() {
-        this.status = 2;
-        this.getArticleObject();
-        this.axios.post('/author/articleDto', this.articleObj).then(res => {
-          console.log(res);
-          if (res.data.code == 0) {
-            this.$message.success('保存成功');
-          } else {
-            this.$message.warn('草稿箱已经存在！');
-          }
-        })
-
-      },
-      getCategoryAndTag() {
-        this.axios.get('/author/categoryDto').then(res => {
-          console.log(res);
-          if (res.data.code == 0) {
-            this.categoryList = res.data.data; //种类列表
-            for (let i = 0; i < this.categoryList.length; i++)
-              if (this.articleStatus == 1) { //编写文章时
-                if (this.categoryList[i].state) { //默认选中第一个种类和种类对应的第一个标签
-                  this.tagList = this.categoryList[i].tags;
-                  this.categoryId = this.categoryList[i].categoryId;
-                  if (this.tagList.length)
-                    this.tagId = this.tagList[i].tagId;
-                  break;
-                }
-              } else { //查看和修改文章时，选中文章标签
-                if (this.categoryId == this.categoryList[i].categoryId) {
-                  this.tagList = this.categoryList[i].tags;
-                }
-              }
-          }
-        })
-      },
-      categoryChange() {
-        for (let i = 0; i < this.categoryList.length; i++) {
-          if (this.categoryId == this.categoryList[i].categoryId) {
-            this.tagList = this.categoryList[i].tags;
-            if (this.tagList.length)
-              this.tagId = this.tagList[0].tagId;
-            else
-              this.tagId = '';
-          }
         }
       },
-      showDrawer() {
-        this.axios.get('author/articleDto?states=2').then(res => {
-          if (res.data.code == 0) {
-            this.draftList = res.data.data.list;
-          }
-        })
-        this.drawerVisible = true;
-      },
-      showDraft(articleId) {
-        this.isDraft = true;
-        this.axios.get('/author/articleDto/' + articleId).then(res => {
+      getfullName(id) {
+        this.axios.get('/organization/list/' + id).then(res => {
+          let item;
           if (res.data.code == 0) {
             let data = res.data.data;
-            this.articleId = data.articleId;
-            this.articleTitle = data.articleTitle;
-            this.articleContent = data.articleContent;
-            this.categoryId = data.categoryId;
-            this.tagId = data.tags[0].tagId;
-            this.drawerVisible = false;
+            for (let i = 0; i < data.length; i++) {
+              item = {
+                value: data[i].fullNameIdPth,
+                label: data[i].fullName,
+                id: data[i].id,
+                children: [],
+              }
+              item.children = this.getfullName(data[i].id);
+              this.options.push(item);
+            }
+            return item;
           }
         })
+      },
+      getActivity() {
+        this.status = 1;
+        this.axios.get('/activity/list?page=' + this.page + '&limit=' + this.pageSize + '&status=' + this.status)
+          .then(res => {
+            console.log(res)
+            if (res.data.code == 0) {
+              this.draftList = res.data.data;
+              this.drawerVisible = true;
+            }
+
+          })
       },
       drawerClose() {
         this.drawerVisible = false;
+      },
+      changeActivity(id) {
+        this.id = id;
+        this.axios.get('/activity/' + id).then(res => {
+          let data = res.data.data;
+          if (res.data.code == 0) {
+            this.title = data.title;
+            this.pictures = data.pictures;
+            this.startTime = this.moment(data.startTime);
+            this.endTime = this.moment(data.endTime);
+            this.num = data.num;
+            this.fullRole = [];
+            this.fullRole.push(data.fullRole);
+            console.log(data.leaderList)
+            this.people = data.leaderList.length;
+            this.leaderList = data.leaderList;
+            let item = {
+              uid: data.pictures,
+              status: 'done',
+              url: this.home + data.pictures
+            }
+            this.fileList.push(item)
+            this.pictures = data.pictures;
+            this.description = data.description;
+            this.drawerVisible = false;
+          }
+        })
       }
     }
   }
@@ -294,24 +379,50 @@
 
   .mavon-editor {
     width: 100%;
-    height: 95vh;
+    /* height: 100%; */
+    height: 100vh;
     background: #fff;
   }
 
   .markdown-body {
-    height: 96%;
+    height: 100%;
   }
 
-  .title-input {
-    flex: 1 1 auto;
-    margin: 0;
-    font-size: 24px;
-    font-weight: 600;
-    color: #666;
-    border: none;
-    outline: none;
-    padding: 10px 20px;
-    width: 72%;
+  .mavon-header {
+    padding: 50px 60px 20px 60px
+  }
+
+  .ant-input {
+    width: 400px;
+    margin-right: 20px;
+  }
+
+  .ant-calendar-picker-container {
+    z-index: 10000 !important;
+  }
+
+  .mavon-editor>>>.ant-upload {
+    margin-left: 75px;
+  }
+
+  .mavon-editor>>>.ant-upload-list-picture-card .ant-upload-list-item {
+    width: 180px;
+    height: 150px;
+  }
+
+  .mavon-editor>>>.ant-upload-list-picture-card {
+    margin-left: 15px;
+  }
+
+  .mavon-editor>>>.ant-upload.ant-upload-select-picture-card {
+    width: 180px;
+    height: 150px;
+  }
+
+  .mavon-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
   }
 
   input::placeholder {

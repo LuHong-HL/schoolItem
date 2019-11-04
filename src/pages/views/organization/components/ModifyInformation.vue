@@ -132,6 +132,10 @@ export default {
 .image {
   width: 100%;
   height: auto;
+  padding: 10px;
+  margin-top: 10px;
+  background-color:#fff;
+  border: 1px solid #ccc;
 }
 .button {
   margin-top: 15px;

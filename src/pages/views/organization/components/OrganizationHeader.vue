@@ -1,8 +1,8 @@
 <template>
   <div class="header">
     <a-button icon="user-add" type="primary" @click="showModal">添加成员</a-button>
-    <div class="modalClass">
-      <a-modal title="请填写需要添加的子组织信息" v-model="visible"  width="85%" :footer="null">
+    <div >
+      <a-modal title="请填写需要添加的子组织信息" v-model="visible"  width="85%" :footer="null" class="modalClass">
         <div class="innerBox">
           <div class="text">
             <p>名称：</p>
@@ -180,9 +180,5 @@ export default {
   right: 0;
 }
 /* 修改模态框标题样式 */
-/* .modalClass >>>.ant-modal-title {
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 20px;
-} */
+ 
 </style>

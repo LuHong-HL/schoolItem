@@ -28,8 +28,12 @@
 						title: '活动管理',
 						children:[
 							{
-								key:'informationCheck',
-								title:'申请信息审核'
+								key:'activityInformation',
+								title:'活动信息'
+							},
+							{
+								key:'publishActivity',
+								title:'发布活动'
 							}
 						]
 					},

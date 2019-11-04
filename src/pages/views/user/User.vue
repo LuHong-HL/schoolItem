@@ -2,8 +2,8 @@
   <!-- 根div的class为content确保内容在右边区域出现 -->
   <div class="content">
     <div class="inner">
-      <UserHeader @transferSearchValue="getSearchValue"></UserHeader>
-      <UserTable :sonSearchValue="fatherSearchValue"></UserTable>
+      <UserHeader @transferSearchValue="getSearchValue" @getFlag="getSonFlag"></UserHeader>
+      <UserTable :sonSearchValue="fatherSearchValue" :falg="flag"></UserTable>
     </div>
   </div>
 </template>
@@ -21,7 +21,8 @@ export default {
   data() {
     return {
       // userData: []
-      fatherSearchValue:'',
+      fatherSearchValue:'',//所搜框的搜素内容
+      flag:false,//获取数据的标志
     };
   },
   components: {
@@ -33,6 +34,9 @@ export default {
     getSearchValue(searchValue){
         this.fatherSearchValue=searchValue;
     },
+    getSonFlag(flag){
+      this.flag=flag;
+    }
     //将数据传给子组件
 
 

@@ -12,8 +12,6 @@
       :rowKey="record=>record.id"
       :pagination="false"
     >
-      <!-- 性别渲染 -->
-      <span slot="sex" slot-scope="sex">{{sex?"男":"女"}}</span>
       <!-- 图片渲染加载 -->
       <template slot="logoLink" slot-scope="logoLink">
         <a href="javascript:void(0);" @click="showModal($baseURL+logoLink)">
@@ -42,7 +40,7 @@ let columns = [
     width: "10%"
   },
   {
-    title: "姓名",
+    title: "名称",
     dataIndex: "name",
     width: "10%"
   },
@@ -106,20 +104,6 @@ export default {
       this.imageUrl=url;
     },
   
-    //请求社团机构成员的数据
-    // getUserData() {
-    //   let params = {
-    //     page: this.currentPage,
-    //     limit: this.limit,
-    //     input: this.sonSearchValue
-    //   };
-    //   this.axios.get("/user/organization", { params }).then(result => {
-    //     console.log("result:", result);
-    //     this.total = result.data.totalElements;
-    //     console.log("total", this.total);
-    //     this.userData = result.data.data;
-    //   });
-    // },
     //获取组织下全部直属组织的信息
     getOrganizationData() {
       

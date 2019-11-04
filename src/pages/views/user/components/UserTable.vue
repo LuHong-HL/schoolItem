@@ -22,7 +22,7 @@
       </template>
       <span slot="action" slot-scope="text, record" class="action">
         <!-- 操作气泡确认框 -->
-        <a-popconfirm title="您确认添加此信息吗？" @confirm="confirm(record)" okText="确认" cancelText="取消">
+        <a-popconfirm title="您确认删除此信息吗？" @confirm="confirm(record)" okText="确认" cancelText="取消">
           <span class="iconfont iconshanchu"></span>
         </a-popconfirm>
       </span>
@@ -90,7 +90,7 @@ let columns = [
 ];
 
 export default {
-  props: ["sonSearchValue"],
+  props: ["sonSearchValue","falg"],
   created() {
     this.getUserData();
   },
@@ -160,6 +160,10 @@ export default {
     },
     userData: function(newValue, oldValue) {
       console.log("newValue", newValue);
+    },
+    falg:function(newFlag,oldFlag){
+      console.log("newFlag,oldFlag",newFlag,oldFlag)
+      this.getUserData();
     }
   }
 };

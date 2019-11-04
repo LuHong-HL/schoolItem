@@ -22,7 +22,7 @@ import Announcement from '@/pages/announcement/Announcement'
 // import PlaceCreateUser from '@/pages/place/view/PlaceCreateUser'
 
 // 导入组件路径
-import Activity from '@/pages/views/activity/Activity'
+import ActivityInformation from '@/pages/views/activity/ActivityInformation'
 import Comment from '@/pages/views/comment/Comment'
 import Organization from '@/pages/views/organization/Organization'
 import User from '@/pages/views/user/User'
@@ -34,6 +34,7 @@ import ModifyInformation from '../pages/views/organization/components/ModifyInfo
 import MavenEditor from '../pages/views/maveneditor/MavenEditor.vue'
 import InformationCheck from '../pages/views/activity/components/InformationCheck.vue'
 import Check from '../pages/views/activity/components/Check.vue'
+import PublishActivity from '../pages/views/activity/PublishActivity'
 
 Vue.use(Router)
 
@@ -60,14 +61,6 @@ const router = new Router({
     component: Home,
     children: [
       // home下的子路由
-      {
-        path: 'activity',
-        name: 'activity',
-        component: Activity,
-        meta: {
-          title: '活动管理'
-        }
-      },
       {
         path: 'comment',
         name: 'comment',
@@ -147,6 +140,22 @@ const router = new Router({
         component: Check,
         meta: {
           title: '申请信息审核'
+        }
+      },
+      {
+        path: 'publishActivity',
+        name: 'publishActivity',
+        component: PublishActivity,
+        meta: {
+          title: '发布活动'
+        }
+      },
+      {
+        path: 'activityInformation',
+        name: 'activityInformation',
+        component: ActivityInformation,
+        meta: {
+          title: '活动信息'
         }
       },
 
@@ -238,28 +247,28 @@ const router = new Router({
   ]
 })
 
-// // 路由拦截
-// router.beforeEach((to, from, next) => {
-//   /* 路由发生变化修改页面title */
-//     if (to.meta.title) {
-//       document.title = to.meta.title
-//     }
-//     // 读取sessionStorage中的数据
-//     let user = JSON.parse(sessionStorage.getItem('myUser') || '[]')
-//     // 判断是否登录 是 继续进行管道中的下一个钩子。如果全部钩子执行完了，则导航的状态就是 confirmed （确认的）。
-//     if (user.username && user.password) {
-//       next()
-//     } else {//返回上一层
-//       // 如果是注销 跳转到登录页面 先清除sessionStorage中的数据再跳转
-//       if (to.fullPath == "/") {
-//         sessionStorage.clear();
-//         next();
-//       } else {
-//         // 如果没有登录 则中断当前路由 跳转到新路由（登录页面）
-//         next({ path: '/' })
-//       }
-//     }//if else 结束
+// 路由拦截
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化修改页面title */
+    if (to.meta.title) {
+      document.title = to.meta.title
+    }
+    // 读取sessionStorage中的数据
+    let user = JSON.parse(sessionStorage.getItem('myUser') || '[]')
+    // 判断是否登录 是 继续进行管道中的下一个钩子。如果全部钩子执行完了，则导航的状态就是 confirmed （确认的）。
+    if (user.username && user.password) {
+      next()
+    } else {//返回上一层
+      // 如果是注销 跳转到登录页面 先清除sessionStorage中的数据再跳转
+      if (to.fullPath == "/") {
+        sessionStorage.clear();
+        next();
+      } else {
+        // 如果没有登录 则中断当前路由 跳转到新路由（登录页面）
+        next({ path: '/' })
+      }
+    }//if else 结束
 
-//   })
+  })
 
 export default router

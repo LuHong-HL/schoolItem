@@ -29,4 +29,10 @@ export default {
   .ant-badge-multiple-words{
     padding: 0;
   }
+  /* 修改模态框标题样式 */
+ .modalClass .ant-modal-title {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 20px;
+  }
 </style>

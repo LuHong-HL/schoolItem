@@ -57,7 +57,9 @@ export default {
       current: 1,
       activityData:null,
       total: 1,
-      limit: 8
+      limit: 8,
+      status:2,//活动信息状态 1保存 2发布
+
       // link:'\file\head_link\6fc5b7c333754395bd0cd1f3ecf39fa9.jpg',
     };
   },
@@ -72,7 +74,8 @@ export default {
       console.log("current:", this.current);
       let params = {
         page: this.current,
-        limit: this.limit
+        limit: this.limit,
+        status:this.status
       };
       this.axios.get("/activity/list", { params }).then(result => {
         console.log("activityComment:",result);
