@@ -35,7 +35,7 @@ import MavenEditor from '../pages/views/maveneditor/MavenEditor.vue'
 import InformationCheck from '../pages/views/activity/components/InformationCheck.vue'
 import Check from '../pages/views/activity/components/Check.vue'
 import PublishActivity from '../pages/views/activity/PublishActivity'
-
+import Test2 from '../pages/views/common/Test2.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -156,6 +156,14 @@ const router = new Router({
         component: ActivityInformation,
         meta: {
           title: '活动信息'
+        }
+      },
+      {
+        path: 'test2',
+        name: 'test2',
+        component: Test2,
+        meta: {
+          title: '测试2'
         }
       },
 

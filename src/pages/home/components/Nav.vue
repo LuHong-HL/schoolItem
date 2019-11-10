@@ -49,10 +49,14 @@
 						key: 'comment',
 						title: '评论管理',
 					},
-					{
-						key: 'test',
-						title: '测试专用',
-					},
+					// {
+					// 	key: 'test',
+					// 	title: '测试专用',
+					// },
+					// 	{
+					// 	key: 'test2',
+					// 	title: '测试专用2',
+					// },
 
 					// {
 					// 	key: 'place/view/PlaceSchool',
